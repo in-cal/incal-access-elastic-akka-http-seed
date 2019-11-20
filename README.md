@@ -1,6 +1,6 @@
 # InCal Elastic + Akka HTTP Seed Project
 
-This project is meant to demonstrate functionality of InCal Elastic library by integrating it with a simple Akka HTTP server and providing a skeleton (seed) app to fork and further customize.
+This project is meant to demonstrate functionality of InCal Elastic library by integrating it with a simple Akka HTTP server and providing a skeleton / seed app to fork and further customize.
 
 ## Installation
 
@@ -28,7 +28,7 @@ sudo apt install oracle-java8-set-default
   * Modify the configuration in `/etc/elasticsearch/elasticsearch.yml`
   
   ```sh
-    cluster.name: example_app-cluster (if not changed "elasticsearch" is used by default)
+    cluster.name: seed_app-cluster (if not changed "elasticsearch" is used by default)
     bootstrap.memory_lock: true
     network.host: x.x.x.x           (set to a non-localhost ip address if the db should be accessible within a network)
     thread_pool:
@@ -98,7 +98,7 @@ sudo apt install oracle-java8-set-default
   ```
     {
       host = "http://127.0.0.1:9200"
-      name = "example_app-cluster"
+      name = "seed_app-cluster"
     }
   ```
   * Run Cerebro, for example at the port 9209
@@ -123,12 +123,12 @@ To configure the example app server pls. set the host and port properties in `ap
 
 ```
 ############
-# Example app #
+# Seed App #
 ############
 
-example_app.host = "localhost"
+seed_app.host = "localhost"
 
-example_app.port = 8080
+seed_app.port = 8080
 
 ##################
 # Elastic search #
@@ -137,7 +137,7 @@ example_app.port = 8080
 elastic {
   host = "127.0.0.1"
   port = 9200
-  cluster.name = "example_app-cluster"
+  cluster.name = "seed_app-cluster"
 
   type = "transport"
   client.transport.sniff = true
@@ -157,7 +157,7 @@ To create an executable jar with all dependencies run
 sbt assembly
 ```
 
-This will produce a file such as `example_app-seed-assembly-0.1.0.jar`
+This will produce a file such as `incal-access-elastic-akka-http-seed-assembly-0.1.0.jar`
 
 ## Usage / Examples
 

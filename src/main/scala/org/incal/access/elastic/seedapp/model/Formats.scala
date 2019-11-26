@@ -4,6 +4,7 @@ import java.util.{Date, UUID}
 
 import spray.json.{DeserializationException, JsNumber, JsString, JsValue, JsonFormat}
 
+// a few handy Spray formats
 object Formats {
 
   implicit object UUIDFormat extends JsonFormat[UUID] {

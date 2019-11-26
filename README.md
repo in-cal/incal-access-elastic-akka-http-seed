@@ -157,7 +157,7 @@ To create an executable jar with all dependencies run
 sbt assembly
 ```
 
-This will produce a file such as `incal-access-elastic-akka-http-seed-assembly-0.1.0.jar`
+This will produce a file such as `incal-access-elastic-akka-http-seed-assembly-0.0.2.jar`
 
 ## Usage / Examples
 

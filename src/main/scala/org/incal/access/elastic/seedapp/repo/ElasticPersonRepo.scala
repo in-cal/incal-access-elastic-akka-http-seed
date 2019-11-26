@@ -5,10 +5,8 @@ import java.util.{Date, UUID}
 import com.sksamuel.elastic4s.http.HttpClient
 import javax.inject.Inject
 
-import scala.reflect.runtime.{universe => ru}
 import org.incal.access.elastic.ElasticSetting
-import org.incal.access.elastic.caseclass.ElasticCaseClassAsyncCrudRepo
-import org.incal.access.elastic.seedapp.SeedAppValidationException
+import org.incal.access.elastic.caseclass.{ElasticCaseClassAsyncCrudRepo, TypeValueConverters}
 import org.incal.access.elastic.seedapp.model.{Gender, Person}
 
 private class ElasticPersonRepo @Inject()(
@@ -31,32 +29,13 @@ private class ElasticPersonRepo @Inject()(
     dateField("timeCreated") store true includeInAll(includeInAll)
   )
 
-  // note that the mappings could be simplified if instead of the case-class reflection-based serializer we use a JSON format (Spray or Play) serializer
+  // note that the mappings could be simplified if instead of the case-class reflection-based serializer we use a JSON format: i.e. a Spray or Play serializer
   override protected def valueToJsonString(value: Any): Option[String] =
     value match {
       case gender: Gender.Value => super.valueToJsonString(gender.toString)
       case _ => super.valueToJsonString(value)
     }
 
-  override protected val typeValueConverters = Seq(
-    (
-      ru.typeOf[Date], (_: Any) match {
-        case ms: Long => new Date(ms)
-        case ms: Int => new Date(ms)
-        case value: Any => value
-      }
-    ),
-    (
-      ru.typeOf[UUID], (_: Any) match {
-        case uuid: String => UUID.fromString(uuid)
-        case value: Any => value
-      }
-    ),
-    (
-      ru.typeOf[Gender.Value], (_: Any) match {
-        case string: String => Gender.withName(string)
-        case value: Any => throw new SeedAppValidationException(s"String gender expected but got ${value}.")
-      }
-    )
-  )
+  override protected val typeValueConverters =
+    Seq(TypeValueConverters.date, TypeValueConverters.uuid, TypeValueConverters.enum(Gender))
 }

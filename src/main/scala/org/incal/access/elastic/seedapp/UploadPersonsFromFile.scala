@@ -4,11 +4,13 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.google.inject.Guice
 import com.typesafe.scalalogging.Logger
-import org.incal.access.elastic.seedapp.model.{AkkaFileUtil, Gender, Person}
+import org.incal.access.elastic.seedapp.model.{Gender, Person}
 import org.incal.access.elastic.seedapp.repo.RepoTypes.PersonRepo
-import org.incal.access.elastic.seedapp.repo.{RepoModule, StreamSpec}
+import org.incal.access.elastic.seedapp.repo.RepoModule
 import net.codingwell.scalaguice.InjectorExtensions._
-import org.incal.access.elastic.seedapp.repo.CrudRepoExtra._
+import org.incal.core.akka.AkkaFileIO
+import org.incal.core.dataaccess.CrudRepoExtra._
+import org.incal.core.dataaccess.StreamSpec
 import org.slf4j.LoggerFactory
 
 object UploadPersonsFromFile extends App {
@@ -38,7 +40,7 @@ object UploadPersonsFromFile extends App {
     logger.info(s"Loading persons from the file '${csvFileName}'.")
 
     // parse the csv and create a stream of persons
-    val personInputStream = AkkaFileUtil.csvAsSourceWithTransform(csvFileName,
+    val personInputStream = AkkaFileIO.csvFileSourceTransform(csvFileName,
       header => {
         val columnIndexMap = header.map(_.trim).zipWithIndex.toMap
         val nameColumnIndex = columnIndexMap.get("name").get
@@ -57,7 +59,7 @@ object UploadPersonsFromFile extends App {
     )
 
     // default stream spec... if needed batch size, backpressure size and parallelism can be specified
-    val streamSpec = StreamSpec()
+    val streamSpec = StreamSpec(batchSize = None)
 
     // save the stream
     personRepo.saveAsStream(personInputStream, streamSpec)
